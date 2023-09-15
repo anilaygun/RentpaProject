@@ -1,6 +1,9 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,43 +21,74 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        public void Add(Car car)
+        public IResult Add(Car car)
         {
-            if (car.Description.Length > 2 && car.DailyPrice > 0)
+            if (car.Description.Length < 2 && car.DailyPrice <= 0)
             {
-                _carDal.Add(car);
-                Console.WriteLine(car.Description + ", Arabası eklendi.");
+                return new ErrorResult(Messages.CarAddException);
+            }
+            _carDal.Add(car);
+            return new SuccessResult(Messages.CarAdded);
+
+        }
+
+        public IResult Delete(Car car)
+        {
+            if (car.Id != null)
+            {
+                _carDal.Delete(car);
+                return new SuccessResult(Messages.CarDeleted);
+
             }
             else
             {
-                Console.WriteLine("Araba ekleme başarısız!");
+                return new ErrorResult(Messages.CarIdInvalid);
+            }
+        }
+        public IResult Update(Car car)
+        {
+            if (car.Id != null)
+            {
+                _carDal.Update(car);
+                return new SuccessResult(Messages.CarUpdated);
+            }
+            else
+            {
+                return new ErrorResult(Messages.CarIdInvalid);
+            }
+        }
+        public IDataResult<List<Car>> GetAll()
+        {
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll());
+        }
+
+        public IDataResult<List<CarDetailDto>> GetCarDetails()
+        {
+            if (DateTime.Now.Hour == 24)
+            {
+                return new ErrorDataResult<List<CarDetailDto>>(Messages.MaintenanceTime);
+            }
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(),Messages.CarListed);
+        }
+
+        public IDataResult<List<Car>> GetCarsByBrandId(int brandId)
+        {
+            if (brandId == null)
+            {
+                return new ErrorDataResult<List<Car>>(Messages.CarIdInvalid);
+            }
+            else
+            {
+                return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.BrandId == brandId));
             }
         }
 
-        public void Delete(Car car)
+        public IDataResult<List<Car>> GetCarsByModelYear(DateTime min, DateTime max)
         {
-            throw new NotImplementedException();
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.ModelYear >= min && c.ModelYear <= max));
         }
 
-        public List<Car> GetAll()
-        {
-            return _carDal.GetAll();
-        }
 
-        public List<Car> GetCarsByBrandId(int id)
-        {
-            return _carDal.GetAll(c => c.BrandId == id);
-        }
-
-        public List<Car> GetCarsByModelYear(DateTime min, DateTime max)
-        {
-            return _carDal.GetAll(c => c.ModelYear >= min && c.ModelYear <= max);
-        }
-
-        public void Update(Car car)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }
