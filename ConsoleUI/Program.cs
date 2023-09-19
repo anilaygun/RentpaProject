@@ -10,7 +10,7 @@ Console.WriteLine("----------*_TEST ZONE_*----------\n");
 //UserAddTest();
 //CustomerTest();
 
-RentalTest();
+//RentalTest();
 
 static void CarTest()
 {
