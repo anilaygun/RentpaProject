@@ -51,6 +51,7 @@ namespace Business.Constants
         public static string CustomerIdInvalid = "Hatalı ID!";
         public static string CustomerAddException = "Müşteri Eklenemedi!";
         public static string CustomerListed = "Müşteriler Listelendi!";
+        public static string CompanyNameExists = "Müşteri firması zaten kayıtlı!";
 
         //Result - RENTAL
         public static string RentalAdded = "Kiralama Eklendi";
@@ -59,6 +60,17 @@ namespace Business.Constants
         public static string RentalIdInvalid = "Hatalı ID!";
         public static string RentalAddException = "Kiralama Eklenemedi!";
         public static string RentalListed = "Kiralamalar Listelendi!";
+
+        //Result - CARIMAGE
+        public static string CarImageAdded = "Araba Resmi Eklendi";
+        public static string CarImageDeleted = "Araba Resmi Silindi";
+        public static string CarImageUpdated = "Araba Resmi Güncellendi";
+        public static string CarImageInvalid = "Hatalı ID!";
+        public static string CarImageAddException = "Araba Resmi Eklenemedi!";
+        public static string CarImageListed = "Araba Resimleri Listelendi!";
+        public static string CarImageListedById = "Araba Resimleri Kimlik Numarasına Göre Listelendi!";
+        public static string CarImageLimitReached = "Araba Resmi Sınırına Ulaşıldı!";
+        public static string CarImageAlreadyHave = "Araba Resmi Mevcut!";
 
     }
 }

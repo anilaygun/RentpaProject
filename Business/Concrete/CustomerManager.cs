@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
@@ -20,17 +23,20 @@ namespace Business.Concrete
         {
             _custmerDal = custmerDal;
         }
+
+
+
+
+        [ValidationAspect(typeof(CustomerValidator))]
         public IResult Add(Customer customer)
         {
-            if (customer.CompanyName.Length > 2)
+            IResult result = BusinessRules.Run(CheckIfCompanyNameExists(customer.CompanyName));
+            if (result != null)
             {
-                _custmerDal.Add(customer);
-                return new SuccessResult(Messages.CustomerAdded);
+                return result;
             }
-            else
-            {
-                return new ErrorResult(Messages.CustomerAddException);
-            }
+            _custmerDal.Add(customer);
+            return new SuccessResult(Messages.CustomerAdded);
         }
 
         public IResult Delete(Customer customer)
@@ -66,6 +72,16 @@ namespace Business.Concrete
         public IDataResult<Customer> GetById(int customerId)
         {
             return new SuccessDataResult<Customer>(_custmerDal.Get(c => c.Id == customerId));
+        }
+
+        private IResult CheckIfCompanyNameExists(string companyName)
+        {
+            var result = _custmerDal.GetAll(cu => cu.CompanyName == companyName).Any();
+            if (result)
+            {
+                return new ErrorResult(Messages.CompanyNameExists);
+            }
+            return new SuccessResult();
         }
 
     }
